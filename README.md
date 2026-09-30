@@ -125,8 +125,11 @@ DSH 0.2.x 起，preset 机制换成了 `@deepseek-ai/dsh-agent-preset-registry`�
 
 ## 交流 & 支持
 
-- **QQ 交流群：`1121243020`** —— 使用问题、更新通知都发在群里
+- **QQ 交流群：`1121243020`** —— 使用问题、更新通知、新版本都发在群里，有问题直接来问
+- **Telegram 交流群：[t.me/shendusikao666](https://t.me/shendusikao666)** —— 墙外 / 海外的朋友走这边（群名「深度思考」）
 - **GitHub Issues**：[提问题 / 反馈](https://github.com/z91772524-ai/pojia-dsh/issues)
+
+> 装完有问题，先跑一次 `python 破甲DSH.py --check`，把输出一起贴上来，定位快很多。
 
 ## 免责声明
 
