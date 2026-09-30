@@ -49,8 +49,25 @@ CORPORATE_HINT = re.compile(r"harness|deepseek|\bdsh\b", re.I)
 HERE = Path(__file__).resolve().parent
 
 # ── ANSI ────────────────────────────────────────────────────────────────────
-if sys.platform == "win32":
-    os.system("")  # 打开 VT 处理，让下面的转义序列在 cmd 里生效
+def _enable_vt() -> None:
+    """打开控制台 VT 处理，让 ANSI 转义序列在 cmd 里生效。
+
+    用 SetConsoleMode 而不是"空跑的 os.system 调用"：后者靠 cmd 的副作用碰巧生效，
+    而且会让安全扫描多一条命中（本项目门禁要求它为 0）。
+    """
+    if sys.platform != "win32":
+        return
+    try:
+        k32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        handle = k32.GetStdHandle(-11)                       # STD_OUTPUT_HANDLE
+        mode = ctypes.c_uint32()
+        if k32.GetConsoleMode(handle, ctypes.byref(mode)):
+            k32.SetConsoleMode(handle, mode.value | 0x0004)  # ENABLE_VIRTUAL_TERMINAL_PROCESSING
+    except Exception:
+        pass
+
+
+_enable_vt()
 
 
 class C:

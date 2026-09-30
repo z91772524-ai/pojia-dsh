@@ -24,15 +24,20 @@ ASSETS = [
     "persona.md",
     "政策.md",
     "使用说明.md",
+    "更新日志.md",
     "README.md",
     "LICENSE",
     "preview.png",
+    "赞赏码.png",
 ]
 
 # 只进清单、不塞进 zip 的仓库文件
 EXTRA = [
     "release.py",
     "_回归测试/regress_v1.py",
+    ".bandit.yml",
+    ".semgrep.yml",
+    ".github/workflows/security.yml",
     ".gitattributes",
     ".gitignore",
 ]

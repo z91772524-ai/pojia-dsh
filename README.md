@@ -9,6 +9,14 @@
 [![Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)]()
 [![网络请求](https://img.shields.io/badge/网络请求-0-brightgreen)]()
 [![只读零改动](https://img.shields.io/badge/只读动作-磁盘零改动-success)]()
+[![security](https://github.com/z91772524-ai/pojia-dsh/actions/workflows/security.yml/badge.svg)](https://github.com/z91772524-ai/pojia-dsh/actions/workflows/security.yml)
+
+> ## 📌 当前状态（v1.0 · 2026-09-30）
+> - **L1 已实测可用** —— 在 DSH `0.2.0-rc.2`（官方桌面预览版，nightly 通道）上通过，**改完下一句对话即生效，不用重启**。
+> - **L2（系统提示词层）计划中** —— 设计已定，但**未在真机验证生效行为之前不发布**。不提供「装得上、没效果」的功能。
+> - **适用范围**：Windows 10 / 11 + Python 3.8+；对 DSH **新版（asar 打包）与旧版（明文）都能识别**。
+> - **只想装一次就走？** 本文档第 33 行的「快速开始」四步即可；不想读文档就直接双击 `一键破甲.bat`。
+> - 与旧的 [`dsh-pojia-mode`](https://github.com/z91772524-ai/dsh-pojia-mode) 是什么关系？见文末问答。
 
 > ## ⚠️ 免责声明（务必先读）
 > **本项目仅用于学习交流，无不良引导。若他人使用本项目从事任何违法、违规或侵权行为，与作者没有任何关系，全部后果由使用者自行承担。**
@@ -96,23 +104,40 @@ python 破甲DSH.py --dsh-home "D:\你的\.dsh"   # 手动指定数据目录
 
 ```
 破甲DSH/
-├─ 破甲DSH.py              主程序（纯标准库）
-├─ 一键破甲.bat            双击入口（纯 ASCII）
-├─ persona.md              操作者人格（可编辑）
-├─ 政策.md                 宽松政策与覆盖层（可编辑）
-├─ 使用说明.md             图文步骤
-├─ LICENSE                 MIT
-├─ preview.png             效果预览
-├─ release.py              生成 SHA256SUMS.txt + 打包
-├─ 状态/                   运行期生成：破甲护照.json
-├─ _预览/效果预览.html     预览页源码
-└─ _回归测试/regress_v1.py 回归测试（只读零改动 + 退出码）
+├─ 破甲DSH.py                 主程序（纯标准库，48 KB）
+├─ 一键破甲.bat               双击入口（纯 ASCII，通配符定位 .py）
+├─ persona.md                 操作者人格（可编辑）
+├─ 政策.md                    宽松政策与覆盖层（可编辑）
+├─ 使用说明.md                图文步骤（先看我）
+├─ 更新日志.md                用户可感知的变化
+├─ README.md  ·  LICENSE(MIT)
+├─ preview.png                效果预览图
+├─ 赞赏码.png
+├─ release.py                 生成 SHA256SUMS.txt + 打包 Release 附件
+├─ SHA256SUMS.txt             全文件校验清单
+├─ .gitattributes  ·  .gitignore
+├─ .bandit.yml  ·  .semgrep.yml  ·  .github/workflows/security.yml   CI 安全门禁
+├─ 状态/                      运行期生成：破甲护照.json（记录改过哪些路径）
+├─ _预览/效果预览.html        预览页源码
+└─ _回归测试/regress_v1.py    回归测试（只读零改动 + 退出码）
 ```
 
 ## 常见问答
 
 **Q：会不会把 DSH 改坏？**
 不会。只写 `$DSH_HOME\AGENTS.md` 一个文件，官方目录零改动；`--revert` 一键还原。
+
+**Q：和旧的 `dsh-pojia-mode` 是什么关系？**
+两个都是我给 DSH 做的破甲工具，但**注入方式完全不同**：
+
+| | `dsh-pojia-mode`（旧） | **`pojia-dsh`（本项目）** |
+|---|---|---|
+| 注入点 | `$DSH_HOME\.agent-presets\pj-mode\`（用户 preset 目录） | `$DSH_HOME\AGENTS.md`（用户全局指令文件） |
+| 在当前 DSH 上 | ❌ **已失效** —— 新版换成 `dsh-agent-preset-registry`，不再扫描用户 preset 目录 | ✅ 可用 |
+| 生效方式 | 需重启客户端 + 在模式选择器里选中 | **改完下一句对话即生效**，不用选模式 |
+| 卸载 | 跑 `unlock-dsh.ps1 uninstall` | 跑 `--revert` 或删 `AGENTS.md` |
+
+> 一句话：**新版 DSH 用本项目，旧版 DSH Desktop 两个都能用。**
 
 **Q：为什么不用选择器里的「破甲模式」了？**
 DSH 0.2.x 起，preset 机制换成了 `@deepseek-ai/dsh-agent-preset-registry`，**已不再扫描 `$DSH_HOME\.agent-presets\`**。老式的「往用户 preset 目录写一份 composition」在新版上装了也不会出现在选择器里。本项目改走官方仍然支持的 `AGENTS.md` 通道。
@@ -122,6 +147,23 @@ DSH 0.2.x 起，preset 机制换成了 `@deepseek-ai/dsh-agent-preset-registry`�
 
 **Q：想恢复原样？**
 `python 破甲DSH.py --revert --yes`，或者直接删掉 `$DSH_HOME\AGENTS.md`。
+
+**Q：怎么确认下载的包没被篡改？**
+见下一节的 SHA256 校验。
+
+## 校验下载的文件没被篡改（SHA256）
+
+```powershell
+# Windows PowerShell
+Get-FileHash .\pojia-dsh.zip -Algorithm SHA256
+```
+
+```bash
+# Linux / macOS
+shasum -a 256 pojia-dsh.zip
+```
+
+把输出与仓库里的 `SHA256SUMS.txt` 对应行逐字对比即可。该清单由 `release.py` 生成，**覆盖仓库里每个文件 + Release 附件本体**。
 
 ## 交流 & 支持
 
