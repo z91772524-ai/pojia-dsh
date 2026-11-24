@@ -165,6 +165,17 @@ shasum -a 256 pojia-dsh.zip
 
 把输出与仓库里的 `SHA256SUMS.txt` 对应行逐字对比即可。该清单由 `release.py` 生成，**覆盖仓库里每个文件 + Release 附件本体**。
 
+## 相关项目
+
+| 项目 | 管什么 | 适合谁 |
+|---|---|---|
+| **本仓库 · 破甲DSH** | 只处理 **DSH**：写 `$DSH_HOME\AGENTS.md`，改完下一句对话就生效 | 只玩 DSH 的 |
+| **[破甲一键通](https://github.com/z91772524-ai/pojia-next)** | **WorkBuddy / ZCode / Codex** 三个客户端，图形界面双击即用，改前备份一键还原 | 也在用 WorkBuddy / Codex 的 |
+| [dsh-pojia-mode](https://github.com/z91772524-ai/dsh-pojia-mode) | 旧方案（往 `agent-presets` 装 preset）**已在新版 DSH 上失效**，仅存档 | 考古的 |
+
+> 一句话：**只搞 DSH 就用本仓库；还要管 WorkBuddy 那些，装破甲一键通。**
+
+
 ## 交流 & 支持
 
 - **QQ 交流群：`1121243020`** —— 使用问题、更新通知、新版本都发在群里，有问题直接来问
